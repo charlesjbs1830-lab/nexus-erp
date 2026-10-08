@@ -1,0 +1,266 @@
+/* ==========================================================================
+   Nexus Jr. | ERP Gestão & Finanças 2.0
+   Design System Oficial: Verde Esmeralda (#059669) + Azul Marinho (#0b1d3a)
+   Padrão: FEA Jr., FGV Jr., FACE Jr. • Alta Performance Empresarial
+   ========================================================================== */
+
+:root {
+  --nexus-navy-deep: #071224;
+  --nexus-navy-sidebar: #0b1d3a;
+  --nexus-navy-card: #112648;
+  --nexus-emerald: #059669;
+  --nexus-emerald-hover: #047857;
+  --nexus-emerald-subtle: #10b981;
+  --nexus-emerald-light: #ecfdf5;
+  --nexus-bg-light: #f8fafc;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: #1e293b;
+  background-color: var(--nexus-bg-light);
+}
+
+/* ==========================================================================
+   NAVEGAÇÃO SIDEBAR
+   ========================================================================== */
+.tab-active {
+  background-color: rgba(5, 150, 105, 0.22);
+  color: #ffffff !important;
+  font-weight: 600;
+  border-left: 4px solid #10b981;
+}
+
+.tab-inactive {
+  color: #94a3b8;
+  border-left: 4px solid transparent;
+  transition: all 0.15s ease;
+}
+
+.tab-inactive:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: #f1f5f9;
+}
+
+/* ==========================================================================
+   CARDS & CONTAINERS DE DADOS
+   ========================================================================== */
+.glass-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.glass-card:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+}
+
+.kpi-card {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  border-left: 4px solid #059669;
+}
+
+.kpi-card h3 {
+  margin: 0 0 10px 0;
+  font-size: 13px;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+}
+
+.kpi-card span {
+  font-size: 24px;
+  font-weight: 800;
+  color: #0b1d3a;
+}
+
+/* Sub-abas de navegação secundária */
+.subtab-active {
+  border-bottom: 2px solid #059669;
+  color: #059669;
+  font-weight: 700;
+}
+
+.subtab-inactive {
+  border-bottom: 2px solid transparent;
+  color: #64748b;
+}
+
+.subtab-inactive:hover {
+  color: #0b1d3a;
+}
+
+/* ==========================================================================
+   BADGES EXECUTIVAS
+   ========================================================================== */
+.badge-valuation-dcf {
+  background-color: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+.badge-obz-conforme {
+  background-color: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.badge-cpq-aprovado {
+  background-color: #eff6ff;
+  color: #1e40af;
+  border: 1px solid #bfdbfe;
+}
+
+.badge-timesheet-alerta {
+  background-color: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.badge-compliance-ok {
+  background-color: #f0fdf4;
+  color: #15803d;
+  border: 1px solid #86efac;
+}
+
+/* ==========================================================================
+   DATAGRID CORPORATIVO & TABELAS
+   ========================================================================== */
+.datagrid-table th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: #f8fafc;
+  color: #475569;
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.datagrid-table tr:hover {
+  background-color: #f8fafc;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #059669;
+}
+
+/* Modal Overlay */
+.modal-overlay {
+  background-color: rgba(7, 18, 36, 0.75);
+  backdrop-filter: blur(4px);
+}
+
+.dashboard-wrapper {
+  flex: 1;
+  padding: 20px;
+  background-color: #f8fafc;
+  min-height: 100vh;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+/* ==========================================================================
+   RESPONSIVIDADE MOBILE NATIVA & OFF-CANVAS DRAWER
+   ========================================================================== */
+@media (max-width: 1023px) {
+  #main-sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 50;
+    transform: translateX(-100%);
+    transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  #main-sidebar.mobile-open {
+    transform: translateX(0) !important;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.35);
+  }
+}
+
+#sidebar-backdrop {
+  display: none;
+}
+#sidebar-backdrop.active {
+  display: block !important;
+}
+
+/* Touch targets >= 44x44px for Mobile Navigation & Interactive Controls */
+@media (max-width: 768px) {
+  button, 
+  .touch-target, 
+  nav button,
+  input[type="button"], 
+  input[type="submit"] {
+    min-height: 44px;
+  }
+  
+  /* Conversão de DataGrids em Cards Verticais Mobile */
+  .responsive-card-table {
+    display: block !important;
+    width: 100% !important;
+  }
+  .responsive-card-table thead {
+    display: none !important;
+  }
+  .responsive-card-table tbody,
+  .responsive-card-table tr,
+  .responsive-card-table td {
+    display: block !important;
+    width: 100% !important;
+  }
+  .responsive-card-table tr {
+    margin-bottom: 0.85rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.75rem;
+    background: #ffffff;
+    padding: 0.85rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+  .responsive-card-table td {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 0.45rem 0.2rem !important;
+    border-bottom: 1px solid #f1f5f9;
+    text-align: right;
+  }
+  .responsive-card-table td:last-child {
+    border-bottom: none;
+    padding-top: 0.75rem !important;
+  }
+  .responsive-card-table td::before {
+    content: attr(data-label);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.65rem;
+    color: #64748b;
+    text-align: left;
+    margin-right: 0.75rem;
+    flex-shrink: 0;
+  }
+}

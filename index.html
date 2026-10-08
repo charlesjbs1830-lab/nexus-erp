@@ -1,0 +1,1788 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexus Jr. | ERP Gestão & Finanças 2.0</title>
+  <!-- Tailwind CSS CDN para utilitários modernos de alta produtividade -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            nexus: {
+              navy: '#0b1d3a',
+              navyDeep: '#071224',
+              navyLight: '#112648',
+              emerald: '#059669',
+              emeraldHover: '#047857',
+              emeraldSubtle: '#10b981',
+              emeraldBg: '#ecfdf5',
+              grayLight: '#f8fafc'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Chart.js para Visual Analytics Dinâmico -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Estilos Corporativos Exclusivos de Finanças & Gestão -->
+  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased flex h-screen overflow-hidden">
+
+  <!-- SIDEBAR LATERAL NAVEGAÇÃO CORPORATIVA -->
+  <aside class="w-64 bg-[#0b1d3a] flex flex-col flex-shrink-0 z-20 shadow-xl border-r border-[#112648]">
+    <!-- Brand / Logotipo Superior -->
+    <div class="p-5 border-b border-slate-700/60 flex items-center gap-3">
+      <div class="w-10 h-10 rounded-lg bg-emerald-600 flex items-center justify-center text-white font-bold text-xl shadow-md">
+        <i class="fa-solid fa-chart-line"></i>
+      </div>
+      <div>
+        <h1 class="text-white font-bold text-base tracking-wide flex items-center gap-2">
+          Nexus Jr.
+          <span class="text-[10px] bg-emerald-500/20 text-emerald-400 font-semibold px-1.5 py-0.5 rounded border border-emerald-500/30">2.0</span>
+        </h1>
+        <p class="text-xs text-slate-400 font-medium">ERP Gestão & Finanças</p>
+      </div>
+    </div>
+
+    <!-- Navegação pelos Módulos Principais + Governança + VPGG -->
+    <nav class="flex-1 p-4 space-y-1.5 overflow-y-auto">
+      <button onclick="switchView('dashboard')" id="nav-dashboard" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all tab-active">
+        <i class="fa-solid fa-chart-pie w-5 text-center text-emerald-400"></i>
+        <span class="font-medium">Painel Executivo (BI)</span>
+      </button>
+
+      <button onclick="switchView('cpq_pipeline')" id="nav-cpq_pipeline" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all tab-inactive">
+        <i class="fa-solid fa-calculator w-5 text-center text-slate-400"></i>
+        <span class="font-medium">Pipeline & CPQ</span>
+      </button>
+
+      <button onclick="switchView('projetos_gantt')" id="nav-projetos_gantt" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all tab-inactive">
+        <i class="fa-solid fa-bars-progress w-5 text-center text-slate-400"></i>
+        <span class="font-medium">Projetos & Gantt</span>
+      </button>
+
+      <button onclick="switchView('ativos_valuation')" id="nav-ativos_valuation" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all tab-inactive">
+        <i class="fa-solid fa-book-bookmark w-5 text-center text-slate-400"></i>
+        <span class="font-medium">Ativos (Valuation/OBZ)</span>
+      </button>
+
+      <button onclick="switchView('timesheet_capacidade')" id="nav-timesheet_capacidade" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all tab-inactive">
+        <i class="fa-solid fa-clock w-5 text-center text-slate-400"></i>
+        <span class="font-medium">Timesheet & Escopo</span>
+      </button>
+
+      <button onclick="switchView('financeiro_compliance')" id="nav-financeiro_compliance" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all tab-inactive">
+        <i class="fa-solid fa-scale-balanced w-5 text-center text-slate-400"></i>
+        <span class="font-medium">Tesouraria, DRE & Forecast</span>
+      </button>
+
+      <button onclick="switchView('membros_vpgg')" id="nav-membros_vpgg" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all tab-inactive">
+        <i class="fa-solid fa-users-gear w-5 text-center text-slate-400"></i>
+        <span class="font-medium">Gente & Gestão (VPGG)</span>
+      </button>
+    </nav>
+
+    <!-- Rodapé da Sidebar: Compliance & Usuário Atual -->
+    <div class="p-4 border-t border-slate-700/60 bg-[#071224]/80">
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-[11px] text-emerald-400 font-semibold uppercase tracking-wider flex items-center gap-1.5">
+          <i class="fa-solid fa-shield-halved text-xs"></i> Lei 13.267/2016
+        </span>
+        <span class="text-[10px] bg-slate-700/60 text-slate-300 px-1.5 py-0.5 rounded font-mono">100% Reinvestido</span>
+      </div>
+      <div class="flex items-center gap-2.5 pt-2">
+        <div class="w-8 h-8 rounded-full bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 flex items-center justify-center font-bold text-xs" id="user-avatar-initials">
+          CP
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="text-xs font-semibold text-white truncate" id="user-display-name">Charles</p>
+          <p class="text-[11px] text-slate-400 truncate" id="user-display-role">Diretor Presidente</p>
+        </div>
+        <button onclick="openLoginModal()" title="Trocar Usuário / Login" class="text-slate-400 hover:text-white p-1 text-sm transition-colors">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- CONTEÚDO PRINCIPAL (MAIN VIEWPORT) -->
+  <main class="flex-1 flex flex-col min-w-0 overflow-hidden bg-slate-50">
+    
+    <!-- Topbar Superior Executiva -->
+    <header class="h-16 bg-white border-b border-slate-200 px-8 flex items-center justify-between flex-shrink-0 z-10 shadow-sm">
+      <div class="flex items-center gap-3">
+        <span id="page-icon" class="text-emerald-600 text-lg">
+          <i class="fa-solid fa-chart-pie"></i>
+        </span>
+        <h2 id="page-title" class="text-lg font-bold text-slate-800 tracking-tight">Painel Executivo (BI & Metas PE)</h2>
+        <span class="text-xs text-slate-500 border-l border-slate-300 pl-3 ml-1 hidden md:inline">Ciclo de Gestão 2026.1</span>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <!-- Badge de Conformidade Estatutária -->
+        <div class="hidden lg:flex items-center gap-2 bg-emerald-50 text-emerald-800 text-xs px-3 py-1.5 rounded-full border border-emerald-200 font-medium">
+          <i class="fa-solid fa-circle-check text-emerald-600"></i>
+          <span>Superávit Reinvestido: <strong id="topbar-superavit">R$ 33.950,00</strong></span>
+        </div>
+
+        <!-- Badge de Ambiente / GitHub Pages -->
+        <div id="backend-status-badge" class="hidden sm:flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full border bg-slate-100 text-slate-700 border-slate-200 font-medium transition-all">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span id="backend-status-text">FastAPI Online</span>
+        </div>
+
+        <button onclick="switchView('cpq_pipeline')" class="btn-primary text-xs flex items-center gap-2 py-2 px-3.5">
+          <i class="fa-solid fa-plus"></i>
+          <span>Nova Proposta CPQ</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Container das Vistas Alternáveis com Scroll Suave -->
+    <div class="flex-1 overflow-y-auto p-6 md:p-8 space-y-6">
+
+      <!-- ====================================================================
+           1. VISTA: PAINEL EXECUTIVO (BI & METAS PE + DASHBOARDS VISUAIS)
+           ==================================================================== -->
+      <section id="view-dashboard" class="space-y-6">
+        <!-- Banner Estatutário -->
+        <div class="bg-gradient-to-r from-[#0b1d3a] to-[#112648] text-white p-6 rounded-xl shadow-md border border-slate-700/50 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div class="space-y-1">
+            <div class="flex items-center gap-2">
+              <span class="bg-emerald-500/20 text-emerald-400 text-xs font-semibold px-2.5 py-0.5 rounded-full border border-emerald-500/30">
+                Governança Estatutária MEJ 2026
+              </span>
+              <span class="text-xs text-slate-300">Conformidade Lei nº 13.267/2016</span>
+            </div>
+            <h3 class="text-xl font-bold tracking-tight">Nexus Consultoria Júnior de Gestão e Negócios</h3>
+            <p class="text-sm text-slate-300 max-w-2xl">
+              Portfólio parametrizado em finanças, modelagem valuation, otimização BPMN e estratégia corporativa. Todos os excedentes são integralmente destinados à capacitação e reserva técnica.
+            </p>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="text-right">
+              <p class="text-xs text-slate-400 font-medium">Margem Média Contribuição</p>
+              <p class="text-2xl font-black text-emerald-400" id="kpi-banner-margem">91,8%</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cards de KPIs Corporativos -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div class="kpi-card">
+            <h3>Faturamento Acumulado (2026)</h3>
+            <div class="flex items-baseline justify-between mt-1">
+              <span id="kpi-faturamento">R$ 41.900,00</span>
+              <span class="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">4 Contratos</span>
+            </div>
+            <p class="text-xs text-slate-500 mt-2">Receita bruta de consultoria executada</p>
+          </div>
+
+          <div class="kpi-card" style="border-left-color: #0b1d3a;">
+            <h3>Superávit Líquido Estatutário</h3>
+            <div class="flex items-baseline justify-between mt-1">
+              <span id="kpi-superavit" class="text-[#0b1d3a]">R$ 33.950,00</span>
+              <span class="text-xs font-semibold text-blue-700 bg-blue-50 px-2 py-0.5 rounded">100% Retido</span>
+            </div>
+            <p class="text-xs text-slate-500 mt-2">Zero distribuição de dividendos a membros</p>
+          </div>
+
+          <div class="kpi-card" style="border-left-color: #10b981;">
+            <h3>Homem-Hora (HH) Executado</h3>
+            <div class="flex items-baseline justify-between mt-1">
+              <span id="kpi-hh">230 h / 395 h</span>
+              <span class="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">58,2%</span>
+            </div>
+            <p class="text-xs text-slate-500 mt-2">Capacidade produtiva dos consultores</p>
+          </div>
+
+          <div class="kpi-card" style="border-left-color: #f59e0b;">
+            <h3>Alertas de Scope Creep</h3>
+            <div class="flex items-baseline justify-between mt-1">
+              <span id="kpi-alerts" class="text-amber-600">1 Alerta Ativo</span>
+              <span class="text-xs font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded">Consumo ≥ 75%</span>
+            </div>
+            <p class="text-xs text-slate-500 mt-2">Monitoramento preditivo de estouro de horas</p>
+          </div>
+        </div>
+
+        <!-- 1. GRÁFICOS DINÂMICOS E VISUAL ANALYTICS (CHART.JS) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <!-- Gráfico de Evolução do Faturamento Acumulado -->
+          <div class="lg:col-span-7 glass-card rounded-xl p-6">
+            <div class="flex items-center justify-between mb-4 border-b pb-3">
+              <div>
+                <h4 class="text-sm font-bold text-slate-800 uppercase tracking-wide flex items-center gap-2">
+                  <i class="fa-solid fa-chart-line text-emerald-600"></i>
+                  Evolução do Faturamento Acumulado (2026)
+                </h4>
+                <p class="text-xs text-slate-500">Comparativo entre Meta do Planejamento Estratégico vs. Faturamento Realizado</p>
+              </div>
+              <span class="text-[11px] font-mono bg-emerald-50 text-emerald-800 font-bold px-2 py-0.5 rounded border border-emerald-200">
+                Realizado: R$ 41.900,00
+              </span>
+            </div>
+            <div class="relative h-64 w-full">
+              <canvas id="chart-revenue-evolution"></canvas>
+            </div>
+          </div>
+
+          <!-- Gráfico de Homem-Hora Orçado vs Executado por Projeto -->
+          <div class="lg:col-span-5 glass-card rounded-xl p-6">
+            <div class="flex items-center justify-between mb-4 border-b pb-3">
+              <div>
+                <h4 class="text-sm font-bold text-slate-800 uppercase tracking-wide flex items-center gap-2">
+                  <i class="fa-solid fa-chart-column text-[#0b1d3a]"></i>
+                  Capacidade: HH Orçado vs. Executado
+                </h4>
+                <p class="text-xs text-slate-500">Esforço técnico alocado por linha de consultoria</p>
+              </div>
+              <span class="text-[11px] font-mono bg-slate-100 text-slate-700 font-bold px-2 py-0.5 rounded">
+                4 Projetos
+              </span>
+            </div>
+            <div class="relative h-64 w-full">
+              <canvas id="chart-hh-comparison"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. FEED DE ATIVIDADES EM TEMPO REAL E RASTRO OPERACIONAL -->
+        <div class="glass-card rounded-xl p-6">
+          <div class="flex items-center justify-between mb-4 border-b pb-3">
+            <div>
+              <h4 class="text-sm font-bold text-slate-800 uppercase tracking-wide flex items-center gap-2">
+                <i class="fa-solid fa-bolt text-amber-500"></i>
+                Feed de Atividades Internas & Rastro Operacional
+              </h4>
+              <p class="text-xs text-slate-500">Registro contínuo de apontamentos, validações de mentores, cotações e governança</p>
+            </div>
+            <div class="flex gap-1.5 text-xs">
+              <button onclick="filterActivities('ALL')" class="btn-secondary text-[11px] py-1 px-2.5">Todas</button>
+              <button onclick="filterActivities('timesheet')" class="btn-secondary text-[11px] py-1 px-2.5">Timesheet</button>
+              <button onclick="filterActivities('mentor_approval')" class="btn-secondary text-[11px] py-1 px-2.5">Mentores</button>
+              <button onclick="filterActivities('cpq_proposal')" class="btn-secondary text-[11px] py-1 px-2.5">CPQ</button>
+              <button onclick="filterActivities('scope_alert')" class="btn-secondary text-[11px] py-1 px-2.5">Alertas</button>
+              <button onclick="filterActivities('member_management')" class="btn-secondary text-[11px] py-1 px-2.5">VPGG</button>
+            </div>
+          </div>
+
+          <div id="activity-feed-container" class="space-y-3 max-h-72 overflow-y-auto pr-1">
+            <!-- Populado dinamicamente via JS -->
+          </div>
+        </div>
+
+        <!-- Portfólio de Projetos Ativos -->
+        <div class="glass-card rounded-xl p-6">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h3 class="text-base font-bold text-slate-800">Projetos em Execução & Cronograma Crítico</h3>
+              <p class="text-xs text-slate-500">Acompanhamento de entregáveis e travas de aprovação de mentores acadêmicos</p>
+            </div>
+            <button onclick="switchView('projetos_gantt')" class="text-xs font-semibold text-emerald-600 hover:text-emerald-700 flex items-center gap-1">
+              Ver Gantt Completo <i class="fa-solid fa-chevron-right text-[10px]"></i>
+            </button>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+              <thead class="bg-slate-100 text-slate-600 text-xs uppercase tracking-wider font-semibold">
+                <tr>
+                  <th class="py-3 px-4">Projeto / Cliente</th>
+                  <th class="py-3 px-4">Macro-Área</th>
+                  <th class="py-3 px-4">Lead Time</th>
+                  <th class="py-3 px-4">Consumo HH</th>
+                  <th class="py-3 px-4">Progresso</th>
+                  <th class="py-3 px-4">Status / Trava Mentor</th>
+                </tr>
+              </thead>
+              <tbody id="dash-projects-tbody" class="divide-y divide-slate-200">
+                <!-- Inserido dinamicamente via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ====================================================================
+           2. VISTA: PIPELINE & CPQ PARAMÉTRICO (MÓDULO COMERCIAL)
+           ==================================================================== -->
+      <section id="view-cpq_pipeline" class="hidden space-y-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-xl font-bold text-slate-900">Calculadora de CPQ Paramétrico (Configure, Price, Quote)</h3>
+            <p class="text-xs text-slate-500">Precificação de consultoria baseada em Homem-Hora (HH), senioridade e margem legal de 15%</p>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button onclick="filterServicesArea('ALL')" class="btn-secondary text-xs py-1.5 px-3">Todos</button>
+            <button onclick="filterServicesArea('Gestão de Processos')" class="btn-secondary text-xs py-1.5 px-3">Processos</button>
+            <button onclick="filterServicesArea('Finanças e Contabilidade')" class="btn-secondary text-xs py-1.5 px-3">Finanças & Contab.</button>
+            <button onclick="filterServicesArea('Inteligência de Mercado & Experiência do Cliente')" class="btn-secondary text-xs py-1.5 px-3">Mercado & Cliente</button>
+            <button onclick="filterServicesArea('Planejamento Estratégico & Marketing')" class="btn-secondary text-xs py-1.5 px-3">Estratégia & Marketing</button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <!-- Formulário CPQ -->
+          <div class="lg:col-span-7 glass-card rounded-xl p-6 space-y-5">
+            <h4 class="text-sm font-bold text-slate-800 uppercase tracking-wide flex items-center gap-2 border-b pb-3">
+              <i class="fa-solid fa-sliders text-emerald-600"></i>
+              Parâmetros de Dimensionamento do Projeto
+            </h4>
+
+            <div class="space-y-4">
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Serviço do Catálogo Padronizado *</label>
+                <select id="cpq-service-select" onchange="onCPQServiceChange()" class="w-full text-sm border-slate-300 rounded-lg shadow-sm focus:border-emerald-500 focus:ring-emerald-500 p-2.5 bg-slate-50">
+                </select>
+                <p id="cpq-service-desc" class="text-xs text-slate-500 mt-1 italic"></p>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-semibold text-slate-700 mb-1">Nome do Cliente / Empresa *</label>
+                  <input type="text" id="cpq-client-name" placeholder="Ex: Indústria Alfa S.A." class="w-full text-sm border-slate-300 rounded-lg shadow-sm focus:border-emerald-500 focus:ring-emerald-500 p-2.5">
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-700 mb-1">Contato do Responsável</label>
+                  <input type="text" id="cpq-client-contact" placeholder="diretoria@cliente.com.br" class="w-full text-sm border-slate-300 rounded-lg shadow-sm focus:border-emerald-500 focus:ring-emerald-500 p-2.5">
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <label class="block text-xs font-semibold text-slate-700 mb-1">Senioridade Recomendada</label>
+                  <select id="cpq-seniority-select" onchange="runCPQSimulation()" class="w-full text-sm border-slate-300 rounded-lg shadow-sm focus:border-emerald-500 focus:ring-emerald-500 p-2.5">
+                    <option value="Trainee / Assessor">Trainee (R$ 35/h)</option>
+                    <option value="Consultor Júnior">Consultor Jr (R$ 55/h)</option>
+                    <option value="Consultor Pleno / Especialista">Consultor Pleno (R$ 85/h)</option>
+                    <option value="Gerente de Projetos" selected>Gerente (R$ 120/h)</option>
+                    <option value="Diretor Executivo">Diretor (R$ 160/h)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-semibold text-slate-700 mb-1">Horas Diagnóstico</label>
+                  <input type="number" id="cpq-horas-diag" value="25" min="5" max="150" onchange="runCPQSimulation()" class="w-full text-sm border-slate-300 rounded-lg shadow-sm focus:border-emerald-500 focus:ring-emerald-500 p-2.5">
+                </div>
+
+                <div>
+                  <label class="block text-xs font-semibold text-slate-700 mb-1">Horas Execução</label>
+                  <input type="number" id="cpq-horas-exec" value="85" min="10" max="400" onchange="runCPQSimulation()" class="w-full text-sm border-slate-300 rounded-lg shadow-sm focus:border-emerald-500 focus:ring-emerald-500 p-2.5">
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1 flex items-center justify-between">
+                  <span>Fator de Risco & Complexidade: <strong id="cpq-risk-label" class="text-emerald-700">1.15x (+15%)</strong></span>
+                </label>
+                <input type="range" id="cpq-risk-slider" min="1.0" max="1.30" step="0.05" value="1.15" oninput="onCPQRiskSliderChange()" class="w-full accent-emerald-600">
+                <div class="flex justify-between text-[10px] text-slate-400 mt-1">
+                  <span>1.00x (Padrão)</span>
+                  <span>1.15x (Moderado)</span>
+                  <span>1.30x (Alta Complexidade)</span>
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Observações Técnicas / Escopo Específico</label>
+                <textarea id="cpq-notes" rows="2" placeholder="Ex: Modelo com análise de cenários Monte Carlo e múltiplos setoriais..." class="w-full text-sm border-slate-300 rounded-lg shadow-sm focus:border-emerald-500 focus:ring-emerald-500 p-2.5"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Resumo da Cotação -->
+          <div class="lg:col-span-5 bg-gradient-to-br from-slate-900 to-[#0b1d3a] text-white rounded-xl p-6 flex flex-col justify-between shadow-lg border border-slate-800">
+            <div>
+              <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <span class="text-xs font-semibold text-emerald-400 uppercase tracking-wider">
+                  <i class="fa-solid fa-receipt mr-1"></i> Precificação Paramétrica
+                </span>
+                <span class="text-[11px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded border border-emerald-500/30">
+                  Lei 13.267/2016
+                </span>
+              </div>
+
+              <div class="mt-4 space-y-3">
+                <div class="flex justify-between text-xs text-slate-300">
+                  <span>Total de Homem-Hora (HH):</span>
+                  <strong class="text-white" id="cpq-res-total-hh">110 h</strong>
+                </div>
+
+                <div class="flex justify-between text-xs text-slate-300">
+                  <span>Taxa Horária Aplicada:</span>
+                  <strong class="text-white" id="cpq-res-hourly-rate">R$ 120,00 / h</strong>
+                </div>
+
+                <div class="flex justify-between text-xs text-slate-300">
+                  <span>Custo Base dos Consultores:</span>
+                  <strong class="text-white" id="cpq-res-custo-base">R$ 13.200,00</strong>
+                </div>
+
+                <div class="flex justify-between text-xs text-slate-300">
+                  <span>Fator de Risco Multiplicador:</span>
+                  <strong class="text-white" id="cpq-res-risco">1.15x</strong>
+                </div>
+
+                <div class="border-t border-slate-800 pt-2 flex justify-between text-xs text-emerald-300 font-medium">
+                  <span>Fundo Estatutário Reinvestimento (15%):</span>
+                  <strong id="cpq-res-reinvestimento">R$ 2.277,00</strong>
+                </div>
+              </div>
+
+              <div class="mt-6 p-4 bg-emerald-950/40 border border-emerald-500/30 rounded-lg">
+                <span class="text-xs text-slate-300 font-medium">Preço Final da Proposta:</span>
+                <div class="text-3xl font-extrabold text-emerald-400 mt-1" id="cpq-res-preco-final">
+                  R$ 17.457,00
+                </div>
+                <p class="text-[11px] text-emerald-200/80 mt-1 flex items-center gap-1.5">
+                  <i class="fa-solid fa-circle-info"></i> Reinvestimento integral obrigatório em capacitação
+                </p>
+              </div>
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-slate-800 flex gap-3">
+              <button onclick="saveCPQProposal()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-lg text-sm shadow-md transition flex items-center justify-center gap-2">
+                <i class="fa-solid fa-file-signature"></i>
+                <span>Gerar Proposta Oficial</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabela de Histórico de Propostas -->
+        <div class="glass-card rounded-xl p-6">
+          <h4 class="text-base font-bold text-slate-800 mb-3">Histórico de Propostas Emitidas pelo CPQ</h4>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+              <thead class="bg-slate-100 text-slate-600 text-xs uppercase tracking-wider font-semibold">
+                <tr>
+                  <th class="py-3 px-4">Proposta</th>
+                  <th class="py-3 px-4">Cliente</th>
+                  <th class="py-3 px-4">Serviço / Área</th>
+                  <th class="py-3 px-4">HH Total</th>
+                  <th class="py-3 px-4">Margem Reinvestimento</th>
+                  <th class="py-3 px-4">Preço Total</th>
+                  <th class="py-3 px-4">Status</th>
+                  <th class="py-3 px-4 text-right">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="cpq-proposals-tbody" class="divide-y divide-slate-200">
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           3. VISTA: PROJETOS & MARCOS (GANTT & VALIDAÇÃO)
+           ==================================================================== -->
+      <section id="view-projetos_gantt" class="hidden space-y-6">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <h3 class="text-xl font-bold text-slate-900">Gestão de Projetos, Marcos Críticos & Aprovação de Mentores</h3>
+            <p class="text-xs text-slate-500">Cronogramas Gantt calibrados para negócios com travas de chancela acadêmica</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="hidden md:inline-block text-xs bg-slate-200 text-slate-700 px-3 py-1.5 rounded-full font-medium">
+              Lead Times CJA: Mapeamento (6-10w) | Financeira (8-12w) | Contábil (12-24w) | Cliente Oculto (4-8w) | Plano de Negócios (8-14w)
+            </span>
+            <button onclick="openProjectModal()" class="btn-primary text-xs flex items-center gap-2 py-2 px-3.5 shadow-sm whitespace-nowrap">
+              <i class="fa-solid fa-folder-plus text-sm"></i>
+              <span>Novo Projeto / Contrato</span>
+            </button>
+          </div>
+        </div>
+
+        <div id="gantt-projects-container" class="space-y-6">
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           4. VISTA: REPOSITÓRIO DE ATIVOS INTELECTUAIS (VALUATION/OBZ/POPs)
+           ==================================================================== -->
+      <section id="view-ativos_valuation" class="hidden space-y-6">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <h3 class="text-xl font-bold text-slate-900">Repositório de Ativos Intelectuais & Modelos</h3>
+            <p class="text-xs text-slate-500">Capital intelectual preservado contra o turnover semestral do MEJ</p>
+          </div>
+          <div class="flex items-center gap-3 w-full sm:w-auto">
+            <input type="text" id="assets-search-input" onkeyup="filterAssets()" placeholder="Buscar modelos (ex: Mapeamento, Financeira, Cliente Oculto)..." class="text-xs border-slate-300 rounded-lg p-2.5 w-full sm:w-64 focus:ring-emerald-500 focus:border-emerald-500">
+            <select id="assets-area-filter" onchange="filterAssets()" class="text-xs border-slate-300 rounded-lg p-2.5 focus:ring-emerald-500 focus:border-emerald-500">
+              <option value="ALL">Todas as Áreas CJA</option>
+              <option value="Gestão de Processos">Gestão de Processos</option>
+              <option value="Finanças e Contabilidade">Finanças e Contabilidade</option>
+              <option value="Inteligência de Mercado & Experiência do Cliente">Inteligência de Mercado & Cliente</option>
+              <option value="Planejamento Estratégico & Marketing">Planejamento Estratégico & Marketing</option>
+            </select>
+            <button onclick="openAssetModal()" class="btn-primary text-xs flex items-center gap-1.5 py-2 px-3 shadow-sm whitespace-nowrap">
+              <i class="fa-solid fa-plus text-xs"></i>
+              <span>Novo Ativo</span>
+            </button>
+          </div>
+        </div>
+
+        <div id="assets-grid-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           5. VISTA: TIMESHEET & ALOCAÇÃO DE CAPACIDADE
+           ==================================================================== -->
+      <section id="view-timesheet_capacidade" class="hidden space-y-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-xl font-bold text-slate-900">Timesheet & Monitoramento Preditivo de Capacidade</h3>
+            <p class="text-xs text-slate-500">Registro diário de esforço em Homem-Hora (HH) com alerta precoce de Scope Creep</p>
+          </div>
+          <!-- 4. EXPORTAÇÃO REAL EXCEL DO TIMESHEET -->
+          <button onclick="exportTimesheetExcel()" class="btn-primary text-xs flex items-center gap-2 py-2 px-3.5 shadow-sm">
+            <i class="fa-solid fa-file-excel text-sm"></i>
+            <span>Exportar Horas HH (.xlsx)</span>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div class="lg:col-span-5 glass-card rounded-xl p-6 space-y-4">
+            <h4 class="text-sm font-bold text-slate-800 uppercase tracking-wide flex items-center gap-2 border-b pb-3">
+              <i class="fa-solid fa-stopwatch text-emerald-600"></i>
+              Lançar Horas Trabalhadas (HH)
+            </h4>
+
+            <form id="timesheet-form" onsubmit="handleTimesheetSubmit(event)" class="space-y-3">
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Projeto *</label>
+                <select id="ts-project-select" onchange="onTimesheetProjectChange()" required class="w-full text-sm border-slate-300 rounded-lg p-2.5 bg-slate-50">
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Marco Relacionado</label>
+                <select id="ts-milestone-select" class="w-full text-sm border-slate-300 rounded-lg p-2.5 bg-slate-50">
+                </select>
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs font-semibold text-slate-700 mb-1">Data *</label>
+                  <input type="date" id="ts-date" required class="w-full text-sm border-slate-300 rounded-lg p-2.5">
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-700 mb-1">Horas Dedicadas (HH) *</label>
+                  <input type="number" id="ts-hours" step="0.5" min="0.5" max="24" required placeholder="Ex: 4.5" class="w-full text-sm border-slate-300 rounded-lg p-2.5">
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs font-semibold text-slate-700 mb-1">Nome do Consultor *</label>
+                  <input type="text" id="ts-consultant-name" required value="Charles" class="w-full text-sm border-slate-300 rounded-lg p-2.5">
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-700 mb-1">E-mail *</label>
+                  <input type="email" id="ts-consultant-email" required value="charles@nexusjr.com" class="w-full text-sm border-slate-300 rounded-lg p-2.5">
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Descrição da Atividade Executada *</label>
+                <textarea id="ts-description" rows="2" required placeholder="Ex: Construção da estrutura DRE e parametrização WACC..." class="w-full text-sm border-slate-300 rounded-lg p-2.5"></textarea>
+              </div>
+
+              <button type="submit" class="w-full btn-primary py-2.5 text-sm flex items-center justify-center gap-2 mt-2">
+                <i class="fa-solid fa-check"></i>
+                <span>Registrar no Timesheet</span>
+              </button>
+            </form>
+          </div>
+
+          <div class="lg:col-span-7 space-y-4">
+            <div class="p-5 bg-white border border-slate-200 rounded-xl shadow-sm">
+              <h4 class="text-sm font-bold text-slate-800 flex items-center gap-2 mb-2">
+                <i class="fa-solid fa-radar text-amber-500"></i>
+                Algoritmo de Detecção de Scope Creep (Consumo HH ≥ 75%)
+              </h4>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                O motor monitora continuamente a razão <code class="bg-slate-100 text-slate-800 px-1 py-0.5 rounded">Consumo HH / Orçado</code> de cada fase técnica. Caso ultrapasse 75% com avanço físico inferior a 90%, o sistema dispara alerta preditivo para a gerência de projetos renegociar aditivo de escopo ou readequar o plano de trabalho.
+              </p>
+            </div>
+
+            <div id="timesheet-scope-alerts" class="space-y-3">
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-card rounded-xl p-6">
+          <h4 class="text-base font-bold text-slate-800 mb-3">Últimos Lançamentos de Horas</h4>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+              <thead class="bg-slate-100 text-slate-600 text-xs uppercase tracking-wider font-semibold">
+                <tr>
+                  <th class="py-3 px-4">Data</th>
+                  <th class="py-3 px-4">Consultor</th>
+                  <th class="py-3 px-4">Projeto / Marco</th>
+                  <th class="py-3 px-4">Horas (HH)</th>
+                  <th class="py-3 px-4">Descrição</th>
+                  <th class="py-3 px-4">Alerta Escopo</th>
+                  <th class="py-3 px-4 text-right">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="timesheet-tbody" class="divide-y divide-slate-200">
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           6. VISTA: TESOURARIA & COMPLIANCE (LEI 13.267) - DRE GERENCIAL
+           ==================================================================== -->
+      <section id="view-financeiro_compliance" class="hidden space-y-6">
+        <!-- Sub-navegação / Tabs da Tesouraria e Forecasting -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-200 pb-3">
+          <div class="flex items-center gap-2">
+            <button id="subtab-btn-dre" onclick="switchFinanceSubTab('dre')" class="px-4 py-2 text-xs font-bold rounded-lg transition-all bg-emerald-700 text-white shadow-sm flex items-center gap-2">
+              <i class="fa-solid fa-file-invoice-dollar"></i>
+              <span>DRE Gerencial & Centro de Custo</span>
+            </button>
+            <button id="subtab-btn-forecasting" onclick="switchFinanceSubTab('forecasting')" class="px-4 py-2 text-xs font-bold rounded-lg transition-all bg-slate-100 text-slate-700 hover:bg-slate-200 flex items-center gap-2">
+              <i class="fa-solid fa-chart-line text-emerald-600"></i>
+              <span>Forecasting & Cenários Macroeconômicos (12-36m)</span>
+              <span class="bg-emerald-100 text-emerald-800 text-[10px] px-1.5 py-0.5 rounded-full font-extrabold uppercase">Novo</span>
+            </button>
+          </div>
+          <div class="text-xs text-slate-500 flex items-center gap-1.5">
+            <i class="fa-solid fa-shield-halved text-emerald-600"></i>
+            <span>Governança Lei 13.267 &bull; Simulações Paramétricas</span>
+          </div>
+        </div>
+
+        <!-- ABA 1: DRE GERENCIAL TRADICIONAL -->
+        <div id="finance-subtab-dre" class="space-y-6">
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <h3 class="text-xl font-bold text-slate-900">DRE Gerencial por Centro de Custo & Tesouraria</h3>
+              <p class="text-xs text-slate-500">Demonstrativo de Resultado do Exercício com destinação estatutária integral dos superávits</p>
+            </div>
+
+            <!-- 4. BOTÕES FUNCIONAIS DE EXPORTAÇÃO REAL (EXCEL E PDF) -->
+            <div class="flex items-center gap-2.5">
+              <button onclick="exportDREExcel()" class="btn-primary text-xs flex items-center gap-1.5 py-2 px-3 shadow-sm" title="Baixar planilha completa .xlsx">
+                <i class="fa-solid fa-file-excel text-sm"></i>
+                <span>Exportar DRE (.xlsx)</span>
+              </button>
+              <button onclick="exportDREPDF()" class="btn-secondary text-xs flex items-center gap-1.5 py-2 px-3 shadow-sm" title="Abrir relatório formatado para impressão ou PDF">
+                <i class="fa-solid fa-print text-sm"></i>
+                <span>Relatório Oficial (PDF)</span>
+              </button>
+
+              <span class="text-xs font-semibold text-slate-600 ml-2">Filtrar:</span>
+              <select id="dre-project-filter" onchange="renderDRETable()" class="text-xs border-slate-300 rounded-lg p-2 font-medium bg-white shadow-sm">
+                <option value="CONSOLIDADO">Todos os Projetos (Consolidado)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Grade: DRE Estruturada + Gráfico OBZ e Certificado Legal -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div class="lg:col-span-8 glass-card rounded-xl p-6">
+              <div class="flex items-center justify-between border-b pb-3 mb-4">
+                <h4 class="text-base font-bold text-slate-800" id="dre-title-heading">Demonstrativo Consolidado do Exercício (2026)</h4>
+                <span class="text-xs bg-emerald-100 text-emerald-800 font-bold px-2.5 py-0.5 rounded">Exercício Aberto</span>
+              </div>
+
+              <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                  <tbody id="dre-table-body" class="divide-y divide-slate-200">
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="lg:col-span-4 space-y-5">
+              <!-- 1. GRÁFICO DINÂMICO DE DISTRIBUIÇÃO DO OBZ / DRE -->
+              <div class="glass-card rounded-xl p-5">
+                <div class="flex items-center justify-between mb-3 border-b pb-2">
+                  <h5 class="text-xs font-bold text-slate-800 uppercase tracking-wide flex items-center gap-1.5">
+                    <i class="fa-solid fa-chart-pie text-emerald-600"></i>
+                    Distribuição do OBZ / Destinação
+                  </h5>
+                  <span class="text-[10px] text-slate-400 font-mono">100% Auditado</span>
+                </div>
+                <div class="relative h-56 w-full flex items-center justify-center">
+                  <canvas id="chart-obz-distribution"></canvas>
+                </div>
+                <p class="text-[11px] text-slate-500 mt-2 text-center">
+                  <strong>81,0%</strong> do montante é retido para capacitação técnica estatutária.
+                </p>
+              </div>
+
+              <!-- Certificado Estatutário -->
+              <div class="bg-gradient-to-br from-[#0b1d3a] to-[#071224] text-white p-6 rounded-xl shadow-lg border border-slate-700">
+                <div class="flex items-center gap-2 text-emerald-400 text-xs font-bold uppercase tracking-wider mb-2">
+                  <i class="fa-solid fa-stamp text-sm"></i> Certificação Estatutária
+                </div>
+                <h4 class="text-lg font-bold">Lei Federal nº 13.267/2016</h4>
+                <p class="text-xs text-slate-300 mt-2 leading-relaxed">
+                  Artigos 2º e 4º: Empresa júnior é constituída sem fins lucrativos, gerida exclusivamente por estudantes, com <strong>vedação explícita de distribuição de lucros</strong> ou remuneração a membros voluntários.
+                </p>
+
+                <div class="mt-4 p-3 bg-white/5 rounded-lg border border-white/10 space-y-2 text-xs">
+                  <div class="flex justify-between">
+                    <span class="text-slate-400">Distribuição a Membros:</span>
+                    <strong class="text-emerald-400">R$ 0,00 (0%)</strong>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-slate-400">Reinvestimento em Capacitação:</span>
+                    <strong class="text-emerald-400">R$ 33.950,00 (100%)</strong>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-slate-400">Termos de Voluntariado:</span>
+                    <strong class="text-emerald-400">100% Arquivados</strong>
+                  </div>
+                </div>
+              </div>
+
+              <div class="glass-card rounded-xl p-5">
+                <h5 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-3">Margem por Projeto</h5>
+                <div id="dre-margin-list" class="space-y-2.5">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ABA 2: FORECASTING & CENÁRIOS MACROECONÔMICOS (12-36M) -->
+        <div id="finance-subtab-forecasting" class="hidden space-y-6">
+          <!-- Banner Superior com Seletor de Horizonte Temporal -->
+          <div class="glass-card rounded-xl p-5 border-l-4 border-emerald-600 bg-gradient-to-r from-white via-emerald-50/20 to-slate-50 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="bg-emerald-600 text-white text-[11px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+                  Inteligência Econométrica 2026-2029
+                </span>
+                <span class="text-xs text-slate-500 font-medium">Modelagem Preditiva com Séries Temporais</span>
+              </div>
+              <h4 class="text-lg font-bold text-slate-900 mt-1">Forecasting & Simulação de Cenários Macroeconômicos</h4>
+              <p class="text-xs text-slate-600 max-w-2xl">
+                Projeção dinâmica de fluxo de caixa baseada na taxa histórica do MEJ, amortização inflacionária, sazonalidade do ciclo acadêmico e vedação estatutária de distribuição de lucros (Lei nº 13.267/2016).
+              </p>
+            </div>
+
+            <!-- Seletor de Horizonte -->
+            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+              <span class="text-xs font-bold text-slate-700 whitespace-nowrap">Horizonte de Projeção:</span>
+              <div class="inline-flex rounded-lg border border-slate-300 p-1 bg-white shadow-sm" id="forecasting-horizon-buttons">
+                <button type="button" onclick="setForecastHorizon(12)" id="btn-horizon-12" class="px-3 py-1.5 text-xs font-semibold rounded-md transition text-slate-600 hover:text-slate-900">
+                  12 Meses (1 Ano)
+                </button>
+                <button type="button" onclick="setForecastHorizon(24)" id="btn-horizon-24" class="px-3 py-1.5 text-xs font-bold rounded-md transition bg-[#0b1d3a] text-white shadow-xs">
+                  24 Meses (2 Anos)
+                </button>
+                <button type="button" onclick="setForecastHorizon(36)" id="btn-horizon-36" class="px-3 py-1.5 text-xs font-semibold rounded-md transition text-slate-600 hover:text-slate-900">
+                  36 Meses (3 Anos)
+                </button>
+              </div>
+              <button onclick="exportForecastCSV()" class="btn-secondary text-xs flex items-center gap-1.5 py-2 px-3 shadow-sm" title="Baixar projeção completa em formato CSV">
+                <i class="fa-solid fa-file-arrow-down text-emerald-600 text-sm"></i>
+                <span>Exportar Projeção</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Cards de KPIs do Forecast -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="kpi-card" style="border-left-color: #0b1d3a;">
+              <div class="flex items-center justify-between">
+                <h3 class="text-xs font-bold text-slate-500 uppercase">Superávit Projetado (Base)</h3>
+                <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-50 text-blue-800">100% Retido</span>
+              </div>
+              <div class="flex items-baseline justify-between mt-1">
+                <span id="kpi-forecast-superavit-base" class="text-xl font-black text-[#0b1d3a]">R$ 0,00</span>
+              </div>
+              <p class="text-[11px] text-slate-500 mt-1" id="kpi-forecast-superavit-alt">
+                Opt: R$ 0,00 | Pess: R$ 0,00
+              </p>
+            </div>
+
+            <div class="kpi-card" style="border-left-color: #059669;">
+              <div class="flex items-center justify-between">
+                <h3 class="text-xs font-bold text-slate-500 uppercase">Saldo Final Tesouraria</h3>
+                <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-800" id="kpi-forecast-cash-status">Seguro</span>
+              </div>
+              <div class="flex items-baseline justify-between mt-1">
+                <span id="kpi-forecast-saldo-final" class="text-xl font-black text-emerald-700">R$ 0,00</span>
+              </div>
+              <p class="text-[11px] text-slate-500 mt-1">
+                Saldo Mínimo: <strong id="kpi-forecast-saldo-min" class="font-mono text-slate-700">R$ 0,00</strong>
+              </p>
+            </div>
+
+            <div class="kpi-card" style="border-left-color: #f59e0b;">
+              <div class="flex items-center justify-between">
+                <h3 class="text-xs font-bold text-slate-500 uppercase">Ponto de Equilíbrio Médio</h3>
+                <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-50 text-amber-800">Break-Even</span>
+              </div>
+              <div class="flex items-baseline justify-between mt-1">
+                <span id="kpi-forecast-breakeven" class="text-xl font-black text-amber-700">R$ 0,00/mês</span>
+              </div>
+              <p class="text-[11px] text-slate-500 mt-1">
+                Necessidade: <strong id="kpi-forecast-contratos-be" class="font-mono text-slate-700">0.0</strong> contratos/mês
+              </p>
+            </div>
+
+            <div class="kpi-card" style="border-left-color: #6366f1;">
+              <div class="flex items-center justify-between">
+                <h3 class="text-xs font-bold text-slate-500 uppercase">Runway de Segurança</h3>
+                <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-800">Sem Vendas</span>
+              </div>
+              <div class="flex items-baseline justify-between mt-1">
+                <span id="kpi-forecast-runway" class="text-xl font-black text-indigo-700">0 meses</span>
+              </div>
+              <p class="text-[11px] text-slate-500 mt-1">
+                Prob. Superávit Positivo: <strong id="kpi-forecast-prob" class="text-emerald-700 font-bold">100%</strong>
+              </p>
+            </div>
+          </div>
+
+          <!-- Grade Principal: Painel de Parâmetros Macroeconômicos + Gráfico Principal de Séries Temporais -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Painel de Sliders e Hipóteses Macroeconômicas (4 cols) -->
+            <div class="lg:col-span-4 glass-card rounded-xl p-5 space-y-4">
+              <div class="flex items-center justify-between border-b pb-3">
+                <h5 class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+                  <i class="fa-solid fa-sliders text-emerald-600"></i>
+                  Premissas Macroeconômicas
+                </h5>
+                <button type="button" onclick="resetForecastingParams()" class="text-[11px] text-emerald-700 hover:text-emerald-800 font-semibold flex items-center gap-1 hover:underline">
+                  <i class="fa-solid fa-arrow-rotate-left text-[10px]"></i> Padrões MEJ
+                </button>
+              </div>
+
+              <!-- Slider 1: Crescimento Anual Histórico Base -->
+              <div class="space-y-1">
+                <div class="flex justify-between items-center text-xs">
+                  <label for="param-growth-base" class="font-semibold text-slate-700">Crescimento Base Anual</label>
+                  <span id="label-param-growth-base" class="font-mono font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded">15.0%</span>
+                </div>
+                <input type="range" id="param-growth-base" min="0" max="60" step="1" value="15" oninput="onForecastingParamChange()" class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600">
+                <p class="text-[10px] text-slate-500">Taxa média anual de expansão da carteira de projetos.</p>
+              </div>
+
+              <!-- Slider 2: Bônus Cenário Otimista -->
+              <div class="space-y-1">
+                <div class="flex justify-between items-center text-xs">
+                  <label for="param-opt-bonus" class="font-semibold text-slate-700">Bônus Cenário Otimista</label>
+                  <span id="label-param-opt-bonus" class="font-mono font-bold text-emerald-800 bg-emerald-100 px-1.5 py-0.5 rounded">+20.0%</span>
+                </div>
+                <input type="range" id="param-opt-bonus" min="5" max="60" step="1" value="20" oninput="onForecastingParamChange()" class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-700">
+                <p class="text-[10px] text-slate-500">Aceleração de captação (valuation, aditivos e inbound).</p>
+              </div>
+
+              <!-- Slider 3: Penalidade Cenário Pessimista -->
+              <div class="space-y-1">
+                <div class="flex justify-between items-center text-xs">
+                  <label for="param-pess-penalty" class="font-semibold text-slate-700">Penalidade Cenário Pessimista</label>
+                  <span id="label-param-pess-penalty" class="font-mono font-bold text-rose-700 bg-rose-50 px-1.5 py-0.5 rounded">-15.0%</span>
+                </div>
+                <input type="range" id="param-pess-penalty" min="0" max="40" step="1" value="15" oninput="onForecastingParamChange()" class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-rose-600">
+                <p class="text-[10px] text-slate-500">Retração de mercado ou maior ciclo de fechamento.</p>
+              </div>
+
+              <!-- Slider 4: Inflação Anual de Custos -->
+              <div class="space-y-1">
+                <div class="flex justify-between items-center text-xs">
+                  <label for="param-inflation" class="font-semibold text-slate-700">Inflação Anual de Custos</label>
+                  <span id="label-param-inflation" class="font-mono font-bold text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded">5.5%</span>
+                </div>
+                <input type="range" id="param-inflation" min="1" max="15" step="0.5" value="5.5" oninput="onForecastingParamChange()" class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-amber-600">
+                <p class="text-[10px] text-slate-500">Reajuste de licenças de softwares, nuvem e insumos.</p>
+              </div>
+
+              <!-- Slider 5: Intensidade da Sazonalidade MEJ -->
+              <div class="space-y-1">
+                <div class="flex justify-between items-center text-xs">
+                  <label for="param-seasonality" class="font-semibold text-slate-700">Sensibilidade Sazonal MEJ</label>
+                  <span id="label-param-seasonality" class="font-mono font-bold text-indigo-700 bg-indigo-50 px-1.5 py-0.5 rounded">1.0x</span>
+                </div>
+                <input type="range" id="param-seasonality" min="0" max="2" step="0.1" value="1.0" oninput="onForecastingParamChange()" class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600">
+                <p class="text-[10px] text-slate-500">Impacto dos ciclos acadêmicos (Jan/Jul recesso vs. Mar/Abr/Set alta).</p>
+              </div>
+
+              <!-- Input: Saldo Inicial de Tesouraria -->
+              <div class="space-y-1 pt-1">
+                <label for="param-initial-cash" class="block text-xs font-semibold text-slate-700">Saldo Inicial de Caixa (R$)</label>
+                <div class="relative">
+                  <span class="absolute inset-y-0 left-0 pl-2.5 flex items-center text-xs text-slate-400 font-mono">R$</span>
+                  <input type="number" id="param-initial-cash" value="45000" step="1000" min="0" onchange="onForecastingParamChange()" class="pl-8 text-xs border border-slate-300 rounded-lg p-2 w-full font-mono font-semibold focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 bg-white">
+                </div>
+              </div>
+
+              <!-- Botão de Recálculo Explícito -->
+              <div class="pt-2">
+                <button type="button" onclick="loadForecastingData()" class="btn-primary w-full text-xs py-2 flex items-center justify-center gap-1.5 shadow-sm">
+                  <i class="fa-solid fa-bolt"></i>
+                  <span>Simular & Recalcular Modelos</span>
+                </button>
+              </div>
+
+              <!-- Nota Estatutária Resumida -->
+              <div class="p-3 bg-slate-50 border border-slate-200 rounded-lg text-[11px] text-slate-600 space-y-1">
+                <div class="font-bold text-slate-800 flex items-center gap-1">
+                  <i class="fa-solid fa-scale-balanced text-emerald-600"></i> Trava Estatutária Imutável:
+                </div>
+                <p>100% dos superávits simulados são destinados para formação empreendedora. Zero dividendos a membros.</p>
+              </div>
+            </div>
+
+            <!-- Gráfico Principal com Seletor de Métrica (8 cols) -->
+            <div class="lg:col-span-8 glass-card rounded-xl p-5 space-y-4 flex flex-col justify-between">
+              <div>
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b pb-3">
+                  <div>
+                    <h5 class="text-sm font-bold text-slate-800 uppercase tracking-wide flex items-center gap-2">
+                      <i class="fa-solid fa-chart-line text-emerald-600"></i>
+                      <span id="forecast-chart-main-title">Evolução do Saldo de Caixa Acumulado</span>
+                    </h5>
+                    <p class="text-xs text-slate-500">Comparativo dos 3 cenários preditivos ao longo do horizonte temporal</p>
+                  </div>
+
+                  <!-- Seletor de Métrica do Gráfico -->
+                  <div class="inline-flex rounded-lg border border-slate-200 p-0.5 bg-slate-100 text-xs">
+                    <button type="button" onclick="setForecastChartMetric('saldo_acumulado')" id="metric-btn-saldo" class="px-2.5 py-1 font-bold rounded-md transition bg-white text-emerald-800 shadow-xs">
+                      Saldo de Caixa
+                    </button>
+                    <button type="button" onclick="setForecastChartMetric('fluxo_liquido')" id="metric-btn-fluxo" class="px-2.5 py-1 font-semibold rounded-md transition text-slate-600 hover:text-slate-900">
+                      Fluxo Líquido
+                    </button>
+                    <button type="button" onclick="setForecastChartMetric('receita')" id="metric-btn-receita" class="px-2.5 py-1 font-semibold rounded-md transition text-slate-600 hover:text-slate-900">
+                      Receita Bruta
+                    </button>
+                    <button type="button" onclick="setForecastChartMetric('custos')" id="metric-btn-custos" class="px-2.5 py-1 font-semibold rounded-md transition text-slate-600 hover:text-slate-900">
+                      Custos
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Legenda Interativa de Cenários -->
+                <div class="flex flex-wrap items-center gap-4 py-2 text-xs">
+                  <div class="flex items-center gap-1.5">
+                    <span class="w-3 h-3 rounded-full bg-emerald-600 inline-block"></span>
+                    <strong class="text-emerald-900">Otimista:</strong>
+                    <span class="text-slate-500 text-[11px]">+20% captação & eficiência</span>
+                  </div>
+                  <div class="flex items-center gap-1.5">
+                    <span class="w-3 h-3 rounded-full bg-[#0b1d3a] inline-block"></span>
+                    <strong class="text-[#0b1d3a]">Base:</strong>
+                    <span class="text-slate-500 text-[11px]">Tendência histórica linear</span>
+                  </div>
+                  <div class="flex items-center gap-1.5">
+                    <span class="w-3 h-3 rounded-full bg-rose-600 inline-block"></span>
+                    <strong class="text-rose-900">Pessimista:</strong>
+                    <span class="text-slate-500 text-[11px]">Estagnação & inflação de custos</span>
+                  </div>
+                </div>
+
+                <!-- Canvas Chart.js Principal -->
+                <div class="relative h-80 w-full mt-2">
+                  <canvas id="chart-forecasting-main"></canvas>
+                </div>
+              </div>
+
+              <!-- Destaque Analítico ao final do gráfico -->
+              <div class="mt-3 p-3 bg-emerald-50/60 border border-emerald-200/80 rounded-lg flex items-center justify-between text-xs">
+                <div class="flex items-center gap-2">
+                  <i class="fa-solid fa-circle-info text-emerald-700"></i>
+                  <span class="text-emerald-950 font-medium" id="forecast-chart-insight">
+                    No Cenário Base, a reserva técnica expande com segurança sem risco de descontinuidade operacional.
+                  </span>
+                </div>
+                <span class="font-mono text-[11px] text-emerald-800 font-bold" id="forecast-horizon-label">Horizonte: 24 meses</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Linha Inferior: Gráfico Comparativo de Fim de Período + Card de Metodologia Econométrica -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Gráfico Comparativo: Superávit Estatutário Total nos 3 Cenários -->
+            <div class="lg:col-span-6 glass-card rounded-xl p-5">
+              <div class="flex items-center justify-between border-b pb-3 mb-3">
+                <div>
+                  <h5 class="text-xs font-bold text-slate-800 uppercase tracking-wide flex items-center gap-1.5">
+                    <i class="fa-solid fa-chart-column text-[#0b1d3a]"></i>
+                    Comparativo de Superávit Estatutário Acumulado
+                  </h5>
+                  <p class="text-[11px] text-slate-500">Volume financeiro total a ser retido e reinvestido ao término do horizonte</p>
+                </div>
+                <span class="text-[10px] font-mono bg-slate-100 text-slate-700 px-2 py-0.5 rounded font-bold">Total Acumulado</span>
+              </div>
+              <div class="relative h-60 w-full">
+                <canvas id="chart-forecasting-comparison"></canvas>
+              </div>
+            </div>
+
+            <!-- Card Metodológico e Governança MEJ -->
+            <div class="lg:col-span-6 bg-gradient-to-br from-[#0b1d3a] to-[#071224] text-white p-5 rounded-xl shadow-lg border border-slate-700 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-3 border-b border-slate-700 pb-2">
+                  <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
+                    <i class="fa-solid fa-calculator text-sm"></i> Metodologia Econométrica do Motor Preditivo
+                  </span>
+                  <span class="text-[10px] bg-emerald-500/20 text-emerald-300 font-mono px-2 py-0.5 rounded border border-emerald-500/30">
+                    Art. 2º Lei 13.267
+                  </span>
+                </div>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                  O motor matemático do Nexus Jr. utiliza equações de séries temporais com taxas compostas mensais:
+                </p>
+                <div class="my-3 p-3 bg-white/5 rounded-lg border border-white/10 font-mono text-[11px] text-emerald-300 space-y-1">
+                  <div>Receita(m) = R₀ &times; (1 + g_mensal)ᵐ &times; SazonalidadeMEJ(m)</div>
+                  <div>Custos(m) = C₀ &times; (1 + inf_mensal)ᵐ &times; (1 + 0.25 &times; (SazonalidadeMEJ(m) - 1))</div>
+                  <div class="text-slate-400 text-[10px] pt-1">Onde g_mensal = (1 + g_anual)^(1/12) - 1 e Sazonalidade calibrada no calendário acadêmico.</div>
+                </div>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                  Todo o fluxo de caixa líquido gerado permanece compulsoriamente na pessoa jurídica da Empresa Júnior, compondo a reserva estatutária para participação no ENEJ, cursos de extensão e infraestrutura.
+                </p>
+              </div>
+
+              <div class="mt-4 pt-3 border-t border-slate-700/80 flex items-center justify-between text-xs">
+                <span class="text-slate-400">Auditoria Automatizada:</span>
+                <span class="text-emerald-400 font-bold flex items-center gap-1">
+                  <i class="fa-solid fa-circle-check"></i> 100% dos superávits blindados
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tabela Mês a Mês da Projeção Detalhada -->
+          <div class="glass-card rounded-xl p-5 space-y-3">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b pb-3">
+              <div>
+                <h5 class="text-xs font-bold text-slate-800 uppercase tracking-wide flex items-center gap-1.5">
+                  <i class="fa-solid fa-table-list text-emerald-600"></i>
+                  Demonstrativo Preditivo Mês a Mês (Detalhamento do Fluxo)
+                </h5>
+                <p class="text-[11px] text-slate-500">Valores nominais projetados com amortização, sazonalidade e taxa de reinvestimento</p>
+              </div>
+
+              <!-- Filtro de Cenário da Tabela -->
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-semibold text-slate-600">Cenário da Tabela:</span>
+                <select id="forecast-table-scenario-select" onchange="renderForecastingTable()" class="text-xs border-slate-300 rounded-lg p-2 font-semibold bg-white shadow-sm">
+                  <option value="base">Cenário Base (Linear Histórico)</option>
+                  <option value="otimista">Cenário Otimista (+20% Captação)</option>
+                  <option value="pessimista">Cenário Pessimista (Estagnação)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="overflow-x-auto">
+              <table class="w-full text-xs">
+                <thead>
+                  <tr class="bg-slate-50 text-slate-600 uppercase text-[10px] tracking-wider border-b">
+                    <th class="py-2.5 px-3 text-left">Mês / Período</th>
+                    <th class="py-2.5 px-3 text-right">Receita Bruta (R$)</th>
+                    <th class="py-2.5 px-3 text-right">Custos Operacionais (R$)</th>
+                    <th class="py-2.5 px-3 text-right">Fluxo Líquido (R$)</th>
+                    <th class="py-2.5 px-3 text-right">Saldo Tesouraria (R$)</th>
+                    <th class="py-2.5 px-3 text-center">Destinação Lei 13.267</th>
+                  </tr>
+                </thead>
+                <tbody id="forecast-table-tbody" class="divide-y divide-slate-100 font-mono">
+                  <!-- Linhas geradas via JavaScript -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           7. VISTA: GESTÃO DE MEMBROS E EQUIPA (PAINEL VPGG / RBAC)
+           ==================================================================== -->
+      <section id="view-membros_vpgg" class="hidden space-y-6">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <h3 class="text-xl font-bold text-slate-900">Painel de Gente & Gestão (VPGG) & Controle de RBAC</h3>
+            <p class="text-xs text-slate-500">Gestão interna de membros, alocação por Centro de Custo, controle de turnover e permissões</p>
+          </div>
+          <button onclick="openMemberModal()" class="btn-primary text-xs flex items-center gap-2 py-2 px-3.5 shadow-sm">
+            <i class="fa-solid fa-user-plus text-sm"></i>
+            <span>Cadastrar Novo Membro</span>
+          </button>
+        </div>
+
+        <!-- Cards de Métricas da VPGG -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div class="kpi-card" style="border-left-color: #059669;">
+            <h3>Membros Ativos (2026.1)</h3>
+            <div class="flex items-baseline justify-between mt-1">
+              <span id="vpgg-kpi-ativos" class="text-slate-900 font-extrabold text-2xl">0</span>
+              <span class="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">100% Regulares</span>
+            </div>
+            <p class="text-xs text-slate-500 mt-2">Termos de Voluntariado válidos</p>
+          </div>
+
+          <div class="kpi-card" style="border-left-color: #0b1d3a;">
+            <h3>Consultores em Projetos</h3>
+            <div class="flex items-baseline justify-between mt-1">
+              <span id="vpgg-kpi-alocados" class="text-[#0b1d3a] font-extrabold text-2xl">0</span>
+              <span class="text-xs font-semibold text-blue-700 bg-blue-50 px-2 py-0.5 rounded">Alocados em CC</span>
+            </div>
+            <p class="text-xs text-slate-500 mt-2">Participando de entregas técnicas</p>
+          </div>
+
+          <div class="kpi-card" style="border-left-color: #3b82f6;">
+            <h3>Liderança Executiva (Diretoria/Gerência)</h3>
+            <div class="flex items-baseline justify-between mt-1">
+              <span id="vpgg-kpi-lideranca" class="text-blue-700 font-extrabold text-2xl">0</span>
+              <span class="text-xs font-semibold text-slate-700 bg-slate-100 px-2 py-0.5 rounded">Governança</span>
+            </div>
+            <p class="text-xs text-slate-500 mt-2">Papéis com permissões de aprovação</p>
+          </div>
+
+          <div class="kpi-card" style="border-left-color: #10b981;">
+            <h3>Índice de Retenção Semestral</h3>
+            <div class="flex items-baseline justify-between mt-1">
+              <span class="text-emerald-700 font-extrabold text-2xl">100.0%</span>
+              <span class="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">Turnover 0%</span>
+            </div>
+            <p class="text-xs text-slate-500 mt-2">Zero evasão não planejada no ciclo</p>
+          </div>
+        </div>
+
+        <!-- Tabela de Membros com Filtros -->
+        <div class="glass-card rounded-xl p-6">
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4 border-b pb-4">
+            <div class="flex items-center gap-3 w-full sm:w-auto">
+              <input type="text" id="member-search-input" onkeyup="filterMembers()" placeholder="Buscar por nome, cargo ou e-mail..." class="text-xs border-slate-300 rounded-lg p-2.5 w-full sm:w-64 focus:ring-emerald-500 focus:border-emerald-500">
+              <select id="member-area-filter" onchange="filterMembers()" class="text-xs border-slate-300 rounded-lg p-2.5 focus:ring-emerald-500 focus:border-emerald-500">
+                <option value="ALL">Todas as Diretorias</option>
+                <option value="Presidência">Presidência</option>
+                <option value="Finanças">Finanças</option>
+                <option value="Projetos">Projetos</option>
+                <option value="Gente e Gestão">Gente e Gestão</option>
+                <option value="Comercial">Comercial</option>
+                <option value="Processos">Processos</option>
+                <option value="Estratégia">Estratégia</option>
+              </select>
+              <select id="member-role-filter" onchange="filterMembers()" class="text-xs border-slate-300 rounded-lg p-2.5 focus:ring-emerald-500 focus:border-emerald-500">
+                <option value="ALL">Todos os Níveis (RBAC)</option>
+                <option value="presidente">Presidente</option>
+                <option value="diretor">Diretor</option>
+                <option value="gerente">Gerente</option>
+                <option value="assessor">Assessor / Consultor</option>
+              </select>
+            </div>
+            <span class="text-xs text-slate-500 font-mono" id="member-count-badge">Carregando membros...</span>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+              <thead class="bg-slate-100 text-slate-600 text-xs uppercase tracking-wider font-semibold">
+                <tr>
+                  <th class="py-3 px-4">Membro / Contato</th>
+                  <th class="py-3 px-4">Cargo / Função</th>
+                  <th class="py-3 px-4">Diretoria</th>
+                  <th class="py-3 px-4">Centro de Custo / Alocação</th>
+                  <th class="py-3 px-4">Nível RBAC</th>
+                  <th class="py-3 px-4">Ciclo / Status</th>
+                  <th class="py-3 px-4 text-right">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="vpgg-members-tbody" class="divide-y divide-slate-200">
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ======================================================================
+       MODAL DE CADASTRO / EDIÇÃO DE MEMBRO (PAINEL VPGG)
+       ====================================================================== -->
+  <div id="modal-member" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-2xl max-w-lg w-full p-6 space-y-4 border border-slate-200">
+      <div class="flex items-center justify-between border-b pb-3">
+        <div class="flex items-center gap-2 text-emerald-700">
+          <i class="fa-solid fa-user-plus text-lg"></i>
+          <h3 class="font-bold text-slate-900 text-base" id="modal-member-title">Cadastrar Novo Membro</h3>
+        </div>
+        <button onclick="closeMemberModal()" class="text-slate-400 hover:text-slate-600 text-lg">&times;</button>
+      </div>
+
+      <form id="member-form" onsubmit="handleMemberSubmit(event)" class="space-y-3">
+        <input type="hidden" id="member-form-id" value="">
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Nome Completo *</label>
+          <input type="text" id="member-name" required placeholder="Ex: Juliana de Castro" class="w-full text-sm border-slate-300 rounded-lg p-2.5">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">E-mail Institucional *</label>
+            <input type="email" id="member-email" required placeholder="juliana.castro@nexusjr.com" class="w-full text-sm border-slate-300 rounded-lg p-2.5">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Senha de Acesso</label>
+            <input type="password" id="member-password" placeholder="Padrão: nexus2026!" class="w-full text-sm border-slate-300 rounded-lg p-2.5">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Diretoria / Área *</label>
+            <select id="member-area" required class="w-full text-sm border-slate-300 rounded-lg p-2.5 bg-slate-50">
+              <option value="Presidência">Presidência</option>
+              <option value="Finanças">Finanças</option>
+              <option value="Projetos" selected>Projetos</option>
+              <option value="Gente e Gestão">Gente e Gestão</option>
+              <option value="Comercial">Comercial</option>
+              <option value="Processos">Processos</option>
+              <option value="Estratégia">Estratégia</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Papel de Acesso (RBAC) *</label>
+            <select id="member-role" required class="w-full text-sm border-slate-300 rounded-lg p-2.5 bg-slate-50">
+              <option value="assessor" selected>Assessor / Consultor</option>
+              <option value="gerente">Gerente</option>
+              <option value="diretor">Diretor</option>
+              <option value="presidente">Presidente</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Cargo Formal *</label>
+          <input type="text" id="member-cargo" required placeholder="Ex: Consultora Pleno de Finanças" class="w-full text-sm border-slate-300 rounded-lg p-2.5">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Centro de Custo / Alocação</label>
+            <select id="member-costcenter" class="w-full text-sm border-slate-300 rounded-lg p-2.5 bg-slate-50">
+              <option value="Presidência e Gestão Geral">Presidência e Gestão Geral</option>
+              <option value="CC #1: Valuation Alpha">CC #1: Valuation Alpha</option>
+              <option value="CC #2: Estruturação OBZ">CC #2: Estruturação OBZ</option>
+              <option value="CC #3: Otimização BPMN">CC #3: Otimização BPMN</option>
+              <option value="CC #4: Planejamento OKRs">CC #4: Planejamento OKRs</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Ciclo de Entrada / Gestão</label>
+            <input type="text" id="member-turnover" value="Ciclo 2026.1" class="w-full text-sm border-slate-300 rounded-lg p-2.5 font-mono">
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-3 pt-3 border-t">
+          <button type="button" onclick="closeMemberModal()" class="btn-secondary text-xs px-4 py-2">Cancelar</button>
+          <button type="submit" class="btn-primary text-xs px-4 py-2 flex items-center gap-1.5">
+            <i class="fa-solid fa-save"></i>
+            <span id="modal-member-btn-label">Salvar Membro</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL DE APROVAÇÃO DO MENTOR ACADÊMICO (TRAVA ESTATUTÁRIA) -->
+  <div id="modal-mentor" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-2xl max-w-lg w-full p-6 space-y-4 border border-slate-200">
+      <div class="flex items-center justify-between border-b pb-3">
+        <div class="flex items-center gap-2 text-emerald-700">
+          <i class="fa-solid fa-graduation-cap text-lg"></i>
+          <h3 class="font-bold text-slate-900 text-base">Chancela & Aprovação do Mentor Orientador</h3>
+        </div>
+        <button onclick="closeMentorModal()" class="text-slate-400 hover:text-slate-600 text-lg">&times;</button>
+      </div>
+
+      <div class="space-y-3">
+        <p class="text-xs text-slate-600">
+          Este entregável é um marco crítico. Para liberar a entrega ao cliente em conformidade com o regimento do MEJ, é necessária a validação técnica formal por um professor orientador ou mentor técnico.
+        </p>
+
+        <div class="p-3 bg-slate-50 border border-slate-200 rounded-lg text-xs space-y-1">
+          <p><strong>Marco:</strong> <span id="mentor-modal-milestone-title">Valuation</span></p>
+          <p><strong>Projeto:</strong> <span id="mentor-modal-project-title">Alpha</span></p>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Nome do Professor / Mentor Orientador *</label>
+          <input type="text" id="mentor-name-input" placeholder="Ex: Prof. Dr. Marcos Silveira (Dpto. de Finanças)" class="w-full text-sm border-slate-300 rounded-lg p-2.5">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Rubrica / Código de Validação *</label>
+          <input type="text" id="mentor-rubric-input" value="APROVADO-MEJ-2026" class="w-full text-sm border-slate-300 rounded-lg p-2.5 font-mono">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Parecer Técnico / Notas de Avaliação *</label>
+          <textarea id="mentor-notes-input" rows="3" placeholder="Ex: Modelo de FCD e premissas de taxa de desconto revisadas e alinhadas às boas práticas setoriais..." class="w-full text-sm border-slate-300 rounded-lg p-2.5"></textarea>
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-3 pt-3 border-t">
+        <button onclick="closeMentorModal()" class="btn-secondary text-xs px-4 py-2">Cancelar</button>
+        <button onclick="submitMentorApproval()" class="btn-primary text-xs px-4 py-2 flex items-center gap-1.5">
+          <i class="fa-solid fa-stamp"></i>
+          <span>Confirmar Aprovação Formal</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DE AUTENTICAÇÃO / TROCA DE USUÁRIO (RBAC) -->
+  <div id="modal-login" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 space-y-4 border border-slate-200">
+      <div class="flex items-center justify-between border-b pb-3">
+        <div class="flex items-center gap-2 text-emerald-700">
+          <i class="fa-solid fa-user-lock text-lg"></i>
+          <h3 class="font-bold text-slate-900 text-base">Autenticação Corporativa (RBAC)</h3>
+        </div>
+        <button onclick="closeLoginModal()" class="text-slate-400 hover:text-slate-600 text-lg">&times;</button>
+      </div>
+
+      <div class="space-y-3">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">E-mail Institucional</label>
+          <input type="email" id="login-email" value="charles@nexusjr.com" class="w-full text-sm border-slate-300 rounded-lg p-2.5">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Senha de Acesso</label>
+          <input type="password" id="login-password" value="edv2026!" class="w-full text-sm border-slate-300 rounded-lg p-2.5">
+        </div>
+
+        <div class="pt-2">
+          <p class="text-[11px] text-slate-500 font-semibold mb-2">Selecione para alternar rapidamente o perfil de teste:</p>
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <button onclick="fillLoginPreset('charles@nexusjr.com', 'edv2026!')" class="p-2 border rounded text-left hover:bg-slate-50">
+              <span class="font-bold block text-slate-800">Charles</span>
+              <span class="text-[10px] text-slate-500">Presidente</span>
+            </button>
+            <button onclick="fillLoginPreset('mariana.financas@nexusjr.com', 'nexus2026!')" class="p-2 border rounded text-left hover:bg-slate-50">
+              <span class="font-bold block text-slate-800">Mariana Souza</span>
+              <span class="text-[10px] text-slate-500">Diretora Finanças</span>
+            </button>
+            <button onclick="fillLoginPreset('lucas.projetos@nexusjr.com', 'nexus2026!')" class="p-2 border rounded text-left hover:bg-slate-50">
+              <span class="font-bold block text-slate-800">Lucas Mendes</span>
+              <span class="text-[10px] text-slate-500">Gerente Projetos</span>
+            </button>
+            <button onclick="fillLoginPreset('beatriz.comercial@nexusjr.com', 'nexus2026!')" class="p-2 border rounded text-left hover:bg-slate-50">
+              <span class="font-bold block text-slate-800">Beatriz Lima</span>
+              <span class="text-[10px] text-slate-500">Diretora Comercial</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-3 pt-3 border-t">
+        <button onclick="closeLoginModal()" class="btn-secondary text-xs px-4 py-2">Cancelar</button>
+        <button onclick="submitLogin()" class="btn-primary text-xs px-4 py-2 flex items-center gap-1.5">
+          <i class="fa-solid fa-key"></i>
+          <span>Entrar no Sistema</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       MODAL 1: EDIÇÃO DE PROPOSTA CPQ
+       ====================================================================== -->
+  <div id="modal-proposal-edit" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-2xl max-w-lg w-full p-6 space-y-4 border border-slate-200">
+      <div class="flex items-center justify-between border-b pb-3">
+        <div class="flex items-center gap-2 text-emerald-700">
+          <i class="fa-solid fa-file-invoice-dollar text-lg"></i>
+          <h3 class="font-bold text-slate-900 text-base">Editar Proposta Comercial</h3>
+        </div>
+        <button onclick="closeProposalModal()" class="text-slate-400 hover:text-slate-600 text-lg">&times;</button>
+      </div>
+
+      <form id="proposal-edit-form" onsubmit="handleProposalEditSubmit(event)" class="space-y-3">
+        <input type="hidden" id="edit-proposal-id" value="">
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Cliente / Empresa *</label>
+            <input type="text" id="edit-proposal-client" required class="w-full text-sm border-slate-300 rounded-lg p-2.5">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Contato do Responsável</label>
+            <input type="text" id="edit-proposal-contact" class="w-full text-sm border-slate-300 rounded-lg p-2.5">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Status da Proposta *</label>
+            <select id="edit-proposal-status" required class="w-full text-sm border-slate-300 rounded-lg p-2.5 bg-slate-50">
+              <option value="proposta_gerada">Proposta Gerada</option>
+              <option value="em_negociacao">Em Negociação</option>
+              <option value="convertida">Convertida (Fechada)</option>
+              <option value="perdida">Perdida</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Senioridade Aplicada</label>
+            <select id="edit-proposal-seniority" class="w-full text-sm border-slate-300 rounded-lg p-2.5 bg-slate-50">
+              <option value="Trainee / Assessor">Trainee</option>
+              <option value="Consultor Júnior">Consultor Jr</option>
+              <option value="Consultor Pleno / Especialista">Consultor Pleno</option>
+              <option value="Gerente de Projetos">Gerente</option>
+              <option value="Diretor Executivo">Diretor</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Horas Diag.</label>
+            <input type="number" id="edit-proposal-diag" min="0" class="w-full text-sm border-slate-300 rounded-lg p-2.5">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Horas Exec.</label>
+            <input type="number" id="edit-proposal-exec" min="0" class="w-full text-sm border-slate-300 rounded-lg p-2.5">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Valor Total (R$) *</label>
+            <input type="number" id="edit-proposal-price" step="0.01" min="0" required class="w-full text-sm border-slate-300 rounded-lg p-2.5 font-mono">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Observações / Notas Comerciais</label>
+          <textarea id="edit-proposal-notes" rows="2" class="w-full text-sm border-slate-300 rounded-lg p-2.5"></textarea>
+        </div>
+
+        <div class="flex justify-end gap-3 pt-3 border-t">
+          <button type="button" onclick="closeProposalModal()" class="btn-secondary text-xs px-4 py-2">Cancelar</button>
+          <button type="submit" class="btn-primary text-xs px-4 py-2 flex items-center gap-1.5">
+            <i class="fa-solid fa-save"></i>
+            <span>Salvar Alterações</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       MODAL 2: NOVO / EDIÇÃO DE PROJETO (CONSULTORIA ATIVA)
+       ====================================================================== -->
+  <div id="modal-project" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-2xl max-w-lg w-full p-6 space-y-4 border border-slate-200">
+      <div class="flex items-center justify-between border-b pb-3">
+        <div class="flex items-center gap-2 text-emerald-700">
+          <i class="fa-solid fa-briefcase text-lg"></i>
+          <h3 class="font-bold text-slate-900 text-base" id="modal-project-title">Novo Projeto / Contrato</h3>
+        </div>
+        <button onclick="closeProjectModal()" class="text-slate-400 hover:text-slate-600 text-lg">&times;</button>
+      </div>
+
+      <form id="project-form" onsubmit="handleProjectSubmit(event)" class="space-y-3">
+        <input type="hidden" id="project-form-id" value="">
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Nome do Projeto / Entregável *</label>
+          <input type="text" id="project-name" required placeholder="Ex: Valuation & Plano Financeiro Beta" class="w-full text-sm border-slate-300 rounded-lg p-2.5">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Cliente / Empresa *</label>
+            <input type="text" id="project-client" required placeholder="Ex: Indústria Beta S.A." class="w-full text-sm border-slate-300 rounded-lg p-2.5">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Gerente de Projetos *</label>
+            <input type="text" id="project-manager" required value="Lucas Mendes" class="w-full text-sm border-slate-300 rounded-lg p-2.5">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Serviço Oficial CJA *</label>
+          <select id="project-service-select" onchange="onProjectServiceSelectChange()" class="w-full text-sm border-slate-300 rounded-lg p-2.5 bg-slate-50">
+            <option value="Mapeamento de Processos" data-area="Gestão de Processos" data-lead="8" data-hh="80" data-val="7800">Mapeamento de Processos (Gestão de Processos)</option>
+            <option value="Consultoria Financeira" data-area="Finanças e Contabilidade" data-lead="10" data-hh="100" data-val="13500" selected>Consultoria Financeira (Finanças e Contabilidade)</option>
+            <option value="Assessoria Contábil" data-area="Finanças e Contabilidade" data-lead="16" data-hh="120" data-val="14400">Assessoria Contábil (Finanças e Contabilidade)</option>
+            <option value="Cliente Oculto" data-area="Inteligência de Mercado & Experiência do Cliente" data-lead="6" data-hh="50" data-val="6200">Cliente Oculto (Mercado & Cliente)</option>
+            <option value="Pesquisa de Mercado" data-area="Inteligência de Mercado & Experiência do Cliente" data-lead="8" data-hh="70" data-val="8400">Pesquisa de Mercado (Mercado & Cliente)</option>
+            <option value="Pesquisa de Satisfação" data-area="Inteligência de Mercado & Experiência do Cliente" data-lead="5" data-hh="40" data-val="4800">Pesquisa de Satisfação (Mercado & Cliente)</option>
+            <option value="Plano de Negócios" data-area="Planejamento Estratégico & Marketing" data-lead="10" data-hh="110" data-val="14400">Plano de Negócios (Estratégia & Marketing)</option>
+            <option value="Plano de Marketing" data-area="Planejamento Estratégico & Marketing" data-lead="8" data-hh="90" data-val="10800">Plano de Marketing (Estratégia & Marketing)</option>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Macro-Área de Negócios *</label>
+            <select id="project-macro-area" required class="w-full text-sm border-slate-300 rounded-lg p-2.5 bg-slate-50">
+              <option value="Gestão de Processos">Gestão de Processos</option>
+              <option value="Finanças e Contabilidade" selected>Finanças e Contabilidade</option>
+              <option value="Inteligência de Mercado & Experiência do Cliente">Inteligência de Mercado & Experiência do Cliente</option>
+              <option value="Planejamento Estratégico & Marketing">Planejamento Estratégico & Marketing</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Status Operacional *</label>
+            <select id="project-status" required class="w-full text-sm border-slate-300 rounded-lg p-2.5 bg-slate-50">
+              <option value="em_andamento" selected>Em Andamento</option>
+              <option value="concluido">Concluído</option>
+              <option value="em_pausa">Em Pausa</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Lead Time (sem) *</label>
+            <input type="number" id="project-lead-time" min="1" max="52" value="10" required class="w-full text-sm border-slate-300 rounded-lg p-2.5">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Total HH Orçado *</label>
+            <input type="number" id="project-total-hh" min="5" max="1000" value="110" required class="w-full text-sm border-slate-300 rounded-lg p-2.5">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Valor Contrato (R$) *</label>
+            <input type="number" id="project-contract-val" step="0.01" min="0" value="14500" required class="w-full text-sm border-slate-300 rounded-lg p-2.5 font-mono">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Data Início</label>
+            <input type="date" id="project-start-date" class="w-full text-sm border-slate-300 rounded-lg p-2.5">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Previsão Conclusão</label>
+            <input type="date" id="project-end-date" class="w-full text-sm border-slate-300 rounded-lg p-2.5">
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-3 pt-3 border-t">
+          <button type="button" onclick="closeProjectModal()" class="btn-secondary text-xs px-4 py-2">Cancelar</button>
+          <button type="submit" class="btn-primary text-xs px-4 py-2 flex items-center gap-1.5">
+            <i class="fa-solid fa-save"></i>
+            <span id="modal-project-btn-label">Criar Projeto</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       MODAL 3: NOVO / EDIÇÃO DE MARCO TÉCNICO (GANTT)
+       ====================================================================== -->
+  <div id="modal-milestone" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 space-y-4 border border-slate-200">
+      <div class="flex items-center justify-between border-b pb-3">
+        <div class="flex items-center gap-2 text-emerald-700">
+          <i class="fa-solid fa-flag text-lg"></i>
+          <h3 class="font-bold text-slate-900 text-base" id="modal-milestone-title">Novo Marco / Fase Técnica</h3>
+        </div>
+        <button onclick="closeMilestoneModal()" class="text-slate-400 hover:text-slate-600 text-lg">&times;</button>
+      </div>
+
+      <form id="milestone-form" onsubmit="handleMilestoneSubmit(event)" class="space-y-3">
+        <input type="hidden" id="milestone-project-id" value="">
+        <input type="hidden" id="milestone-id" value="">
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Nome da Fase / Marco Técnico *</label>
+          <input type="text" id="milestone-name" required placeholder="Ex: Modelagem WACC e FCD" class="w-full text-sm border-slate-300 rounded-lg p-2.5">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Semana Início *</label>
+            <input type="number" id="milestone-week-start" min="1" max="52" value="1" required class="w-full text-sm border-slate-300 rounded-lg p-2.5">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Semana Término *</label>
+            <input type="number" id="milestone-week-end" min="1" max="52" value="4" required class="w-full text-sm border-slate-300 rounded-lg p-2.5">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">HH Orçado *</label>
+            <input type="number" id="milestone-budgeted-hh" min="1" max="500" value="30" required class="w-full text-sm border-slate-300 rounded-lg p-2.5">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Avanço Físico (%)</label>
+            <input type="number" id="milestone-progress-pct" min="0" max="100" value="0" step="5" class="w-full text-sm border-slate-300 rounded-lg p-2.5">
+          </div>
+        </div>
+
+        <div class="space-y-2 pt-2 border-t">
+          <label class="flex items-center gap-2 cursor-pointer text-xs text-slate-800">
+            <input type="checkbox" id="milestone-critical-path" class="rounded text-emerald-600 focus:ring-emerald-500 w-4 h-4">
+            <span class="font-semibold">Faz parte do Caminho Crítico (Gantt)</span>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer text-xs text-slate-800">
+            <input type="checkbox" id="milestone-mentor-req" class="rounded text-emerald-600 focus:ring-emerald-500 w-4 h-4">
+            <span class="font-semibold">Exige Chancela/Validação de Mentor Acadêmico</span>
+          </label>
+        </div>
+
+        <div class="flex justify-end gap-3 pt-3 border-t">
+          <button type="button" onclick="closeMilestoneModal()" class="btn-secondary text-xs px-4 py-2">Cancelar</button>
+          <button type="submit" class="btn-primary text-xs px-4 py-2 flex items-center gap-1.5">
+            <i class="fa-solid fa-save"></i>
+            <span id="modal-milestone-btn-label">Salvar Marco</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       MODAL 4: NOVO / EDIÇÃO DE ATIVO INTELECTUAL (KNOWLEDGE BASE)
+       ====================================================================== -->
+  <div id="modal-asset" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-2xl max-w-lg w-full p-6 space-y-4 border border-slate-200">
+      <div class="flex items-center justify-between border-b pb-3">
+        <div class="flex items-center gap-2 text-emerald-700">
+          <i class="fa-solid fa-book-bookmark text-lg"></i>
+          <h3 class="font-bold text-slate-900 text-base" id="modal-asset-title">Cadastrar Novo Ativo Intelectual</h3>
+        </div>
+        <button onclick="closeAssetModal()" class="text-slate-400 hover:text-slate-600 text-lg">&times;</button>
+      </div>
+
+      <form id="asset-form" onsubmit="handleAssetSubmit(event)" class="space-y-3">
+        <input type="hidden" id="asset-form-id" value="">
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Título do Modelo / Ferramenta *</label>
+          <input type="text" id="asset-title" required placeholder="Ex: Modelo Dinâmico de Valuation (FCD + Múltiplos)" class="w-full text-sm border-slate-300 rounded-lg p-2.5">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Macro-Área CJA *</label>
+            <select id="asset-macro-area" required class="w-full text-sm border-slate-300 rounded-lg p-2.5 bg-slate-50">
+              <option value="Gestão de Processos">Gestão de Processos</option>
+              <option value="Finanças e Contabilidade" selected>Finanças e Contabilidade</option>
+              <option value="Inteligência de Mercado & Experiência do Cliente">Inteligência de Mercado & Experiência do Cliente</option>
+              <option value="Planejamento Estratégico & Marketing">Planejamento Estratégico & Marketing</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Formato do Arquivo *</label>
+            <select id="asset-format" required class="w-full text-sm border-slate-300 rounded-lg p-2.5 bg-slate-50 font-mono">
+              <option value=".xlsx">.xlsx (Excel Avançado)</option>
+              <option value=".docx">.docx (Word / POP)</option>
+              <option value=".pptx">.pptx (Pitch / Apresentação)</option>
+              <option value=".bpmn">.bpmn (Diagrama BPMN)</option>
+              <option value=".pdf">.pdf (Documento Técnico)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Versão Técnica *</label>
+            <input type="text" id="asset-version" required value="v1.0" class="w-full text-sm border-slate-300 rounded-lg p-2.5 font-mono">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Ciclo de Gestão</label>
+            <input type="text" id="asset-turnover-cycle" value="Ciclo 2026.1" class="w-full text-sm border-slate-300 rounded-lg p-2.5 font-mono">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Link de Armazenamento / Repositório</label>
+          <input type="text" id="asset-url" placeholder="https://drive.nexusjr.com/assets/fcd_v1.xlsx" class="w-full text-sm border-slate-300 rounded-lg p-2.5 font-mono">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Autor / Responsável</label>
+            <input type="text" id="asset-author" value="Mariana Souza" class="w-full text-sm border-slate-300 rounded-lg p-2.5">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Mentor / Validador</label>
+            <input type="text" id="asset-mentor" value="Prof. Dr. Marcos Silveira" class="w-full text-sm border-slate-300 rounded-lg p-2.5">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Descrição / Finalidade do Ativo *</label>
+          <textarea id="asset-desc" rows="2" required placeholder="Descreva os componentes, fórmulas e orientações de uso para novos consultores..." class="w-full text-sm border-slate-300 rounded-lg p-2.5"></textarea>
+        </div>
+
+        <div class="flex justify-end gap-3 pt-3 border-t">
+          <button type="button" onclick="closeAssetModal()" class="btn-secondary text-xs px-4 py-2">Cancelar</button>
+          <button type="submit" class="btn-primary text-xs px-4 py-2 flex items-center gap-1.5">
+            <i class="fa-solid fa-save"></i>
+            <span id="modal-asset-btn-label">Publicar Ativo</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       MODAL 5: EDIÇÃO DE APONTAMENTO TIMESHEET (RECÁLCULO DE HH)
+       ====================================================================== -->
+  <div id="modal-timesheet-edit" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 space-y-4 border border-slate-200">
+      <div class="flex items-center justify-between border-b pb-3">
+        <div class="flex items-center gap-2 text-emerald-700">
+          <i class="fa-solid fa-stopwatch text-lg"></i>
+          <h3 class="font-bold text-slate-900 text-base">Editar Lançamento de Horas (HH)</h3>
+        </div>
+        <button onclick="closeTimesheetEditModal()" class="text-slate-400 hover:text-slate-600 text-lg">&times;</button>
+      </div>
+
+      <form id="timesheet-edit-form" onsubmit="handleTimesheetEditSubmit(event)" class="space-y-3">
+        <input type="hidden" id="ts-edit-id" value="">
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Data *</label>
+            <input type="date" id="ts-edit-date" required class="w-full text-sm border-slate-300 rounded-lg p-2.5">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Horas Dedicadas (HH) *</label>
+            <input type="number" id="ts-edit-hours" step="0.5" min="0.5" max="24" required class="w-full text-sm border-slate-300 rounded-lg p-2.5">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Descrição da Atividade *</label>
+          <textarea id="ts-edit-desc" rows="3" required class="w-full text-sm border-slate-300 rounded-lg p-2.5"></textarea>
+        </div>
+
+        <p class="text-[11px] text-slate-500 italic">
+          * A alteração recalculará automaticamente as horas consumidas no projeto e reavaliará os alertas de Scope Creep.
+        </p>
+
+        <div class="flex justify-end gap-3 pt-3 border-t">
+          <button type="button" onclick="closeTimesheetEditModal()" class="btn-secondary text-xs px-4 py-2">Cancelar</button>
+          <button type="submit" class="btn-primary text-xs px-4 py-2 flex items-center gap-1.5">
+            <i class="fa-solid fa-save"></i>
+            <span>Salvar e Recalcular</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MOTOR STANDALONE / GITHUB PAGES DEMO -->
+  <script src="./mock_backend.js"></script>
+  <!-- SCRIPT CLIENT-SIDE PRINCIPAL DO NEXUS JR. -->
+  <script src="./app.js"></script>
+</body>
+</html>
